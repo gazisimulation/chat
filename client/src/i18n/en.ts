@@ -1,13 +1,11 @@
 export const enTranslations = {
   app: {
-    title: "SecureChat"
+    title: "Chat"
   },
   
   auth: {
-    title: "Secure Login",
+    title: "Login or Register",
     subtitle: "Login or register with your credentials",
-    secureMessaging: "Secure Messaging",
-    enterCredentials: "Enter your credentials to continue. New users will be registered automatically.",
     login: "Login",
     register: "Register",
     username: "Username",
@@ -16,15 +14,10 @@ export const enTranslations = {
     passwordPlaceholder: "Enter your password",
     confirmPassword: "Confirm Password",
     confirmPasswordPlaceholder: "Confirm your password",
-    passwordHashNotice: "Password will be hashed using SHA256",
+    passwordHashNotice: "",
     securityNotice: "All data is encrypted and stored securely",
     loggingIn: "Logging in...",
-    registering: "Registering...",
-    authenticating: "Authenticating...",
-    continueSecurely: "Continue Securely",
-    accountCreated: "Account Created",
-    welcomeMessage: "Welcome to Secure Messaging",
-    error: "Authentication Error"
+    registering: "Registering..."
   },
   
   login: {
@@ -68,9 +61,9 @@ export const enTranslations = {
   },
   
   messages: {
-    typePlaceholder: "Type an encrypted message...",
+    typePlaceholder: "Type a message...",
     send: "Send",
-    encrypted: "Encrypted",
+    encrypted: "",
     noMessages: "No messages yet",
     sendFailedTitle: "Failed to send message",
     setKeyFirst: "Set encryption key first",
@@ -98,7 +91,7 @@ export const enTranslations = {
     setKey: "Set Key",
     keySet: "Key set",
     noKey: "No key set",
-    endToEnd: "End-to-end encrypted with AES256",
+    endToEnd: "",
     setKeyTitle: "Set Encryption Key",
     setKeyDescription: "Enter an encryption key to secure your messages. Share this key with your contact through a secure channel outside this app.",
     key: "Encryption Key",
@@ -124,8 +117,6 @@ export const enTranslations = {
     delete: "Delete",
     save: "Save",
     edit: "Edit",
-    remove: "Remove",
-    lightMode: "Light Mode",
-    darkMode: "Dark Mode"
+    remove: "Remove"
   }
 };

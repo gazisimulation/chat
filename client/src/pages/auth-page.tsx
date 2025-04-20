@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -9,173 +9,204 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "@/i18n/i18n";
-import { Lock, Shield } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Lock } from "lucide-react";
 import { Redirect } from "wouter";
-import { useLanguage } from "@/context/language-context";
 import { useTheme } from "@/context/theme-context";
+import { useLanguage } from "@/context/language-context";
+import { MoonIcon, SunIcon } from "lucide-react";
 import TopBar from "@/components/top-bar";
-import { useToast } from "@/hooks/use-toast";
 
-// Single schema for both login and signup
-const authSchema = insertUserSchema.extend({
+const loginSchema = insertUserSchema.extend({
   password: z.string()
     .min(6, { message: "Password must be at least 6 characters" })
     .max(100)
 });
 
+const registerSchema = insertUserSchema.extend({
+  password: z.string()
+    .min(6, { message: "Password must be at least 6 characters" })
+    .max(100),
+  confirmPassword: z.string()
+    .min(6, { message: "Password must be at least 6 characters" })
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
+  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const { theme, toggleTheme } = useTheme();
-  const { language, toggleLanguage } = useLanguage();
-  const [isProcessing, setIsProcessing] = useState(false);
   
   // Redirect to chat if already logged in
   if (user) {
     return <Redirect to="/" />;
   }
 
-  // Single form for both login and registration
-  const form = useForm<z.infer<typeof authSchema>>({
-    resolver: zodResolver(authSchema),
+  // Login form
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       username: "",
       password: "",
     },
   });
 
-  // Handle unified auth submit - try login first, register if user doesn't exist
-  async function onSubmit(values: z.infer<typeof authSchema>) {
-    setIsProcessing(true);
-    
-    try {
-      // Try to login first
-      await loginMutation.mutateAsync({
-        username: values.username,
-        password: values.password,
-      });
-    } catch (error: any) {
-      // If login fails with "user not found", try to register
-      if (error.message?.includes("credentials") || error.message?.includes("not found")) {
-        try {
-          await registerMutation.mutateAsync({
-            username: values.username,
-            password: values.password,
-          });
-          toast({
-            title: t("auth.accountCreated"),
-            description: t("auth.welcomeMessage"),
-          });
-        } catch (registerError: any) {
-          toast({
-            title: t("auth.error"),
-            description: registerError.message,
-            variant: "destructive",
-          });
-        }
-      } else {
-        toast({
-          title: t("auth.error"),
-          description: error.message,
-          variant: "destructive",
-        });
-      }
-    } finally {
-      setIsProcessing(false);
-    }
+  // Register form
+  const registerForm = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  // Handle login submit
+  function onLoginSubmit(values: z.infer<typeof loginSchema>) {
+    loginMutation.mutate({
+      username: values.username,
+      password: values.password,
+    });
+  }
+
+  // Handle register submit
+  function onRegisterSubmit(values: z.infer<typeof registerSchema>) {
+    registerMutation.mutate({
+      username: values.username,
+      password: values.password,
+    });
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/5 flex flex-col">
-      <div className="container max-w-screen-sm px-4 flex-grow flex items-center justify-center py-8">
-        <Card className="w-full border-none shadow-lg">
-          <CardHeader className="text-center space-y-2">
+    <div className="min-h-screen flex flex-col bg-background">
+      <TopBar />
+      
+      <div className="flex-grow flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-sm">
+          <CardHeader className="text-center">
             <div className="flex justify-center">
-              <Shield className="h-12 w-12 text-primary" />
+              <Lock className="h-10 w-10 text-primary mb-2" />
             </div>
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 text-transparent bg-clip-text">
-              {t("auth.secureMessaging")}
-            </CardTitle>
-            <CardDescription className="text-sm max-w-md mx-auto">
-              {t("auth.enterCredentials")}
-            </CardDescription>
+            <CardTitle className="text-2xl">{t("auth.title")}</CardTitle>
+            <CardDescription>{t("auth.subtitle")}</CardDescription>
           </CardHeader>
-          
-          <CardContent className="space-y-6">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("auth.username")}</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder={t("auth.usernamePlaceholder")} 
-                          {...field}
-                          className="h-11" 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("auth.password")}</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder={t("auth.passwordPlaceholder")} 
-                          {...field}
-                          className="h-11" 
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs">
-                        {t("auth.passwordHashNotice")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <Button 
-                  type="submit" 
-                  className="w-full h-11 font-medium mt-2" 
-                  disabled={isProcessing || loginMutation.isPending || registerMutation.isPending}
-                >
-                  {isProcessing ? t("auth.authenticating") : t("auth.continueSecurely")}
-                </Button>
-              </form>
-            </Form>
-            
-            <div className="flex items-center justify-between pt-4 border-t border-border">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-xs" 
-                onClick={toggleLanguage}
-              >
-                {language === "en" ? "Türkçe" : "English"}
-              </Button>
+          <CardContent>
+            <Tabs 
+              defaultValue="login" 
+              value={activeTab} 
+              onValueChange={(value) => setActiveTab(value as "login" | "register")}
+              className="space-y-4"
+            >
+              <TabsList className="grid grid-cols-2">
+                <TabsTrigger value="login">{t("auth.login")}</TabsTrigger>
+                <TabsTrigger value="register">{t("auth.register")}</TabsTrigger>
+              </TabsList>
               
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={toggleTheme} 
-                className="text-xs"
-              >
-                {theme === "light" ? t("common.darkMode") : t("common.lightMode")}
-              </Button>
-            </div>
+              {/* Login Form */}
+              <TabsContent value="login" className="space-y-4">
+                <Form {...loginForm}>
+                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                    <FormField
+                      control={loginForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("auth.username")}</FormLabel>
+                          <FormControl>
+                            <Input placeholder={t("auth.usernamePlaceholder")} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={loginForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("auth.password")}</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder={t("auth.passwordPlaceholder")} {...field} />
+                          </FormControl>
+                          <FormDescription className="text-xs">
+                            {t("auth.passwordHashNotice")}
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={loginMutation.isPending}
+                    >
+                      {loginMutation.isPending ? t("auth.loggingIn") : t("auth.login")}
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
+              
+              {/* Register Form */}
+              <TabsContent value="register" className="space-y-4">
+                <Form {...registerForm}>
+                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                    <FormField
+                      control={registerForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("auth.username")}</FormLabel>
+                          <FormControl>
+                            <Input placeholder={t("auth.usernamePlaceholder")} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={registerForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("auth.password")}</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder={t("auth.passwordPlaceholder")} {...field} />
+                          </FormControl>
+                          <FormDescription className="text-xs">
+                            {t("auth.passwordHashNotice")}
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={registerForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("auth.confirmPassword")}</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder={t("auth.confirmPasswordPlaceholder")} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={registerMutation.isPending}
+                    >
+                      {registerMutation.isPending ? t("auth.registering") : t("auth.register")}
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
+            </Tabs>
             
-            <div className="text-center">
+            <div className="mt-6 pt-4 border-t border-border text-center">
               <p className="text-xs text-muted-foreground">
                 {t("auth.securityNotice")}
               </p>

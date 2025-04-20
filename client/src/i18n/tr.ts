@@ -1,41 +1,34 @@
 export const trTranslations = {
   app: {
-    title: "GüvenliSohbet"
+    title: "Kesinlikle WhatsApp Değil"
   },
   
   auth: {
-    title: "Güvenli Giriş",
-    subtitle: "Kimlik bilgilerinizle giriş yapın veya kayıt olun",
-    secureMessaging: "Güvenli Mesajlaşma",
-    enterCredentials: "Devam etmek için kimlik bilgilerinizi girin. Yeni kullanıcılar otomatik olarak kaydedilecektir.",
+    title: "Sen Kimsin Ya?",
+    subtitle: "Hesap bilgilerinizle giriş yapın veya kayıt olun",
     login: "Giriş",
     register: "Kayıt Ol",
     username: "Kullanıcı Adı",
     usernamePlaceholder: "Kullanıcı adınızı girin",
     password: "Şifre",
-    passwordPlaceholder: "Şifrenizi girin",
-    confirmPassword: "Şifreyi Onayla",
-    confirmPasswordPlaceholder: "Şifrenizi onaylayın",
-    passwordHashNotice: "Şifre SHA256 ile hashlenecek",
-    securityNotice: "Tüm veriler şifrelenir ve güvenli bir şekilde saklanır",
-    loggingIn: "Giriş yapılıyor...",
-    registering: "Kayıt olunuyor...",
-    authenticating: "Doğrulanıyor...",
-    continueSecurely: "Güvenli Şekilde Devam Et",
-    accountCreated: "Hesap Oluşturuldu",
-    welcomeMessage: "Güvenli Mesajlaşmaya Hoş Geldiniz",
-    error: "Kimlik Doğrulama Hatası"
+    passwordPlaceholder: "Şafak",
+    confirmPassword: "Şifreyi Bi Daha Yazsana",
+    confirmPasswordPlaceholder: "Başak",
+    passwordHashNotice: "Şifren kesinlikle 123456 değil",
+    securityNotice: "Fight Club'ı kimseye anlatma",
+    loggingIn: "Pavyona giriş yapılıyor...",
+    registering: "Kayıt olunuyor..."
   },
   
   login: {
     success: "Giriş başarılı",
     welcome: "Tekrar hoş geldiniz, {{username}}",
-    failed: "Giriş başarısız"
+    failed: "Milletin hesabına girmeye kalkma la ahlaksız"
   },
   
   register: {
-    success: "Kayıt başarılı",
-    welcome: "GüvenliSohbet'e hoş geldiniz",
+    success: "Bizdensin",
+    welcome: "Merhaba, ben WhatsApp kullanıyorum!",
     failed: "Kayıt başarısız"
   },
   
@@ -53,14 +46,14 @@ export const trTranslations = {
     logout: "Çıkış Yap",
     deleteAccount: "Hesabı Sil",
     deleteConfirmTitle: "Hesabı Sil",
-    deleteConfirmDescription: "Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm mesajlarınızı ve kişilerinizi kalıcı olarak siler."
+    deleteConfirmDescription: "Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm pis işlerinizi kalıcı olarak siler."
   },
   
   contacts: {
     title: "Kişiler",
     enterIdPlaceholder: "ID girin",
     addContact: "Kişi Ekle",
-    encrypted: "Şifreli",
+    encrypted: "",
     noContacts: "Henüz kişi yok",
     addedTitle: "Kişi eklendi",
     addedDescription: "Kişi başarıyla eklendi",
@@ -68,9 +61,9 @@ export const trTranslations = {
   },
   
   messages: {
-    typePlaceholder: "Şifrelenmiş bir mesaj yazın...",
+    typePlaceholder: "Bir mesaj yazın...",
     send: "Gönder",
-    encrypted: "Şifreli",
+    encrypted: "",
     noMessages: "Henüz mesaj yok",
     sendFailedTitle: "Mesaj gönderilemedi",
     setKeyFirst: "Önce şifreleme anahtarını ayarlayın",
@@ -98,15 +91,15 @@ export const trTranslations = {
     setKey: "Anahtar Ayarla",
     keySet: "Anahtar ayarlandı",
     noKey: "Anahtar ayarlanmadı",
-    endToEnd: "AES256 ile uçtan uca şifreli",
+    endToEnd: "Telegram'ın aksine uçtan uca şifreli",
     setKeyTitle: "Şifreleme Anahtarını Ayarla",
     setKeyDescription: "Mesajlarınızı güvence altına almak için bir şifreleme anahtarı girin. Bu anahtarı, bu uygulama dışında güvenli bir kanal aracılığıyla kişinizle paylaşın.",
     key: "Şifreleme Anahtarı",
     keyPlaceholder: "Şifreleme anahtarını girin",
     confirmKey: "Şifreleme Anahtarını Onayla",
     confirmKeyPlaceholder: "Şifreleme anahtarını onaylayın",
-    shareKeySecurely: "Bu anahtarı, bu uygulama dışında güvenli bir şekilde kişinizle paylaşın",
-    warning: "Tüm mesajlar bu anahtarı kullanarak AES256 ile şifrelenecektir. Siz veya kişiniz bu anahtarı kaybederseniz, mesajlar çözülemez.",
+    shareKeySecurely: "Bu anahtarı, WhatsApp ile kişinizle paylaşın",
+    warning: "Tüm mesajlar bu anahtar kullanarak şifrelenecektir. Siz veya kişiniz bu anahtarı kaybederseniz, mesajlar çözülemez. Anahtarlar paspasın altında olmayacaklar.",
     saveKey: "Anahtarı Kaydet",
     keySetTitle: "Anahtar başarıyla ayarlandı",
     keySetDescription: "Mesajlarınız artık verilen anahtarla şifreleniyor",
@@ -115,7 +108,7 @@ export const trTranslations = {
   
   account: {
     deleted: "Hesap silindi",
-    deletedMessage: "Hesabınız kalıcı olarak silindi",
+    deletedMessage: "Pis işleriniz kalıcı olarak silindi",
     deleteFailed: "Hesap silinemedi"
   },
   
@@ -124,8 +117,6 @@ export const trTranslations = {
     delete: "Sil",
     save: "Kaydet",
     edit: "Düzenle",
-    remove: "Kaldır",
-    lightMode: "Aydınlık Mod",
-    darkMode: "Karanlık Mod"
+    remove: "Kaldır"
   }
 };
