@@ -71,7 +71,9 @@ export const trTranslations = {
     expiringIn: "{{time}} dakika içinde silinecek",
     sent: "Gönderildi",
     received: "Alındı",
-    cannotDecrypt: "[Mesaj çözülemiyor. Önce şifreleme anahtarını ayarlayın]"
+    cannotDecrypt: "[Mesaj çözülemiyor. Önce şifreleme anahtarını ayarlayın]",
+    emptyMessage: "Boş mesaj",
+    emptyMessageDescription: "Boş mesaj gönderemezsiniz"
   },
   
   chat: {

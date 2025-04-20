@@ -71,7 +71,9 @@ export const enTranslations = {
     expiringIn: "Expiring in {{time}} min",
     sent: "Sent",
     received: "Received",
-    cannotDecrypt: "[Cannot decrypt message. Set encryption key first]"
+    cannotDecrypt: "[Cannot decrypt message. Set encryption key first]",
+    emptyMessage: "Empty message",
+    emptyMessageDescription: "Cannot send an empty message"
   },
   
   chat: {
