@@ -43,13 +43,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
-      // Hash the password before sending
-      const hashedCredentials = {
-        ...credentials,
-        password: hashPassword(credentials.password),
-      };
-      
-      const res = await apiRequest("POST", "/api/login", hashedCredentials);
+      // Send plaintext credentials - server will hash the password
+      const res = await apiRequest("POST", "/api/login", credentials);
       return await res.json();
     },
     onSuccess: (user: Omit<SelectUser, "password">) => {
@@ -71,13 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerMutation = useMutation({
     mutationFn: async (credentials: InsertUser) => {
-      // Hash the password before sending
-      const hashedCredentials = {
-        ...credentials,
-        password: hashPassword(credentials.password),
-      };
-      
-      const res = await apiRequest("POST", "/api/register", hashedCredentials);
+      // Send plaintext credentials - server will hash the password
+      const res = await apiRequest("POST", "/api/register", credentials);
       return await res.json();
     },
     onSuccess: (user: Omit<SelectUser, "password">) => {

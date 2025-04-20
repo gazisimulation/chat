@@ -18,7 +18,8 @@ function generateUserId(): string {
   return randomInt(1000000, 999999999999).toString();
 }
 
-// Hash password with SHA256
+// Hash password with SHA256 
+// Note: This matches client-side CryptoJS.SHA256(password).toString()
 function hashPassword(password: string): string {
   return createHash('sha256').update(password).digest('hex');
 }
@@ -111,11 +112,11 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: Error | null, user: Express.User | false, info: { message: string } | undefined) => {
       if (err) return next(err);
       if (!user) return res.status(401).json({ message: info?.message || "Invalid credentials" });
       
-      req.login(user, (err) => {
+      req.login(user, (err: Error | null) => {
         if (err) return next(err);
         
         // Return user info (excluding password)
