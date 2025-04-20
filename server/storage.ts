@@ -51,6 +51,27 @@ export class MemStorage implements IStorage {
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000 // 24h
     });
+    
+    // Run cleanup immediately and then every hour
+    this.cleanupEmptyMessages();
+    setInterval(() => this.cleanupEmptyMessages(), 3600000); // Every hour
+  }
+  
+  // Clean up empty messages
+  private cleanupEmptyMessages() {
+    console.log("Cleaning up empty messages...");
+    const emptyMessages: number[] = [];
+    
+    this.messages.forEach((message, id) => {
+      if (!message.encryptedContent || message.encryptedContent.trim() === '') {
+        emptyMessages.push(id);
+      }
+    });
+    
+    if (emptyMessages.length > 0) {
+      console.log(`Deleting ${emptyMessages.length} empty messages`);
+      emptyMessages.forEach(id => this.messages.delete(id));
+    }
   }
 
   // User methods

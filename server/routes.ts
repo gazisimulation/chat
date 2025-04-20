@@ -95,7 +95,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.json([]);
     }
     
-    const messages = await storage.getMessages(userId, contactId);
+    let messages = await storage.getMessages(userId, contactId);
+    
+    // Filter out messages with empty content
+    messages = messages.filter(message => 
+      message.encryptedContent && message.encryptedContent.trim() !== ''
+    );
     
     // Mark received messages as seen
     for (const message of messages) {
@@ -123,6 +128,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     if (!result.success) {
       return res.status(400).json({ message: "Invalid message data" });
+    }
+    
+    // Check for empty content
+    if (!req.body.encryptedContent || req.body.encryptedContent.trim() === '') {
+      return res.status(400).json({ message: "Message content cannot be empty" });
     }
     
     const message = await storage.createMessage(req.body);

@@ -35,6 +35,12 @@ export function setupWebSocket(wss: WebSocketServer) {
         
         // Handle messages
         if (parsed.type === "message" && userId) {
+          // Validate message content
+          if (!parsed.data.content || parsed.data.content.trim() === '') {
+            console.warn("Received empty message via WebSocket, ignoring");
+            return;
+          }
+          
           // Store message in database
           const newMessage = await storage.createMessage({
             senderId: parsed.senderId,
