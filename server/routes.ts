@@ -3,8 +3,11 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import { insertContactSchema, insertMessageSchema } from "@shared/schema";
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { setupWebSocket } from "./utils";
+
+// Import connection mapping from utils
+import { connections } from "./utils";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
@@ -81,11 +84,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Messages API
-  app.get("/api/messages/:contactId", async (req, res) => {
+  app.get("/api/messages/:contactId?", async (req, res) => {
     if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
     
     const userId = req.user!.userId;
-    const { contactId } = req.params;
+    const contactId = req.params.contactId;
+    
+    // If no contactId is provided, return an empty array
+    if (!contactId) {
+      return res.json([]);
+    }
     
     const messages = await storage.getMessages(userId, contactId);
     
@@ -93,6 +101,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     for (const message of messages) {
       if (message.receiverId === userId && !message.seen) {
         await storage.markMessageAsSeen(message.id);
+        
+        // Notify sender through WebSocket that message was seen
+        const senderWs = connections.get(message.senderId);
+        if (senderWs && senderWs.readyState === WebSocket.OPEN) {
+          senderWs.send(JSON.stringify({
+            type: "seen",
+            data: { messageId: message.id }
+          }));
+        }
       }
     }
     
@@ -109,6 +126,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     const message = await storage.createMessage(req.body);
+    
+    // Send real-time message via WebSocket if receiver is online
+    const receiverWs = connections.get(req.body.receiverId);
+    if (receiverWs && receiverWs.readyState === WebSocket.OPEN) {
+      console.log(`Sending real-time message to ${req.body.receiverId}`);
+      receiverWs.send(JSON.stringify({
+        type: "message",
+        data: message
+      }));
+    } else {
+      console.log(`Receiver ${req.body.receiverId} is not online, message saved to database`);
+    }
     
     res.status(201).json(message);
   });

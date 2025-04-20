@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import SetKeyDialog from "./set-key-dialog";
 import DeleteDialog from "./delete-dialog";
+import { useWebSocket } from "@/context/websocket-context";
 
 type ChatViewProps = {
   contactId: string;
@@ -20,6 +21,7 @@ type ChatViewProps = {
 export default function ChatView({ contactId, userId }: ChatViewProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { isConnected } = useWebSocket();
   const [encryptionKey, setEncryptionKey] = useState<string | null>(null);
   const [isKeyDialogOpen, setIsKeyDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -39,6 +41,18 @@ export default function ChatView({ contactId, userId }: ChatViewProps) {
     queryKey: ["/api/messages", contactId],
     enabled: !!contactId,
   });
+  
+  // Set up polling for new messages while WebSocket isn't connected
+  useEffect(() => {
+    if (!isConnected && contactId) {
+      // Poll every 2 seconds if WebSocket isn't connected
+      const interval = setInterval(() => {
+        refetchMessages();
+      }, 2000);
+      
+      return () => clearInterval(interval);
+    }
+  }, [isConnected, contactId, refetchMessages]);
   
   // Delete chat mutation
   const deleteChatMutation = useMutation({

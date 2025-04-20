@@ -12,7 +12,7 @@ interface WebSocketMessage {
 const WS_OPEN = 1;
 
 // Map to store active connections by userId
-const connections = new Map<string, any>();
+export const connections = new Map<string, any>();
 
 export function setupWebSocket(wss: WebSocketServer) {
   wss.on("connection", (ws: any) => {

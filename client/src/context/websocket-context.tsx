@@ -35,6 +35,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/api/ws`;
     
+    console.log(`Connecting to WebSocket at ${wsUrl}`);
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
@@ -60,6 +61,7 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
     ws.addEventListener("message", (event) => {
       try {
         const message = JSON.parse(event.data);
+        console.log("WebSocket message received:", message);
         
         // Handle different message types
         if (message.type === "message") {
@@ -70,13 +72,25 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
           queryClient.invalidateQueries({ 
             queryKey: ["/api/messages", newMessage.senderId] 
           });
+          
+          // Invalidate all messages queries
+          queryClient.invalidateQueries({
+            queryKey: ["/api/messages"]
+          });
+          
+          // Play notification sound
+          const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU'+'N'+'v'.repeat(20));
+          audio.volume = 0.2;
+          audio.play().catch(e => console.error("Error playing notification sound", e));
         } else if (message.type === "seen") {
           // Update message seen status
           const { messageId } = message.data;
+          // Invalidate all messages queries
           queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
         } else if (message.type === "delete") {
           // Remove message from cache
           const { messageId } = message.data;
+          // Invalidate all messages queries
           queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
         }
       } catch (error) {
