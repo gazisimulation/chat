@@ -39,7 +39,16 @@ export default function ChatView({ contactId, userId }: ChatViewProps) {
     refetch: refetchMessages
   } = useQuery<Message[]>({
     queryKey: ["/api/messages", contactId],
+    queryFn: async () => {
+      if (!contactId) return [];
+      const res = await fetch(`/api/messages/${contactId}`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch messages');
+      }
+      return res.json();
+    },
     enabled: !!contactId,
+    refetchInterval: 3000, // Poll every 3 seconds to ensure we get messages
   });
   
   // Set up polling for new messages while WebSocket isn't connected

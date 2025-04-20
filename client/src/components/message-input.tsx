@@ -57,21 +57,24 @@ export default function MessageInput({
       const encryptedContent = encryptMessage(content, encryptionKey);
       
       // 1. Save message in database
-      await apiRequest("POST", "/api/messages", {
+      const response = await apiRequest("POST", "/api/messages", {
         senderId: userId,
         receiverId: contactId,
         encryptedContent
       });
       
+      const savedMessage = await response.json();
+      
+      console.log("Message saved:", savedMessage);
+      
       // 2. Send via WebSocket for real-time delivery if connected
       if (isConnected) {
+        console.log("Sending message via WebSocket");
         sendMessage({
           type: "message",
           senderId: userId,
           receiverId: contactId,
-          data: {
-            content: encryptedContent,
-          }
+          data: savedMessage
         });
       }
     },

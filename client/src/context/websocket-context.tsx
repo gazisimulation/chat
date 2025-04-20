@@ -73,6 +73,11 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
             queryKey: ["/api/messages", newMessage.senderId] 
           });
           
+          // Also invalidate for the receiver contact ID
+          queryClient.invalidateQueries({ 
+            queryKey: ["/api/messages", newMessage.receiverId] 
+          });
+          
           // Invalidate all messages queries
           queryClient.invalidateQueries({
             queryKey: ["/api/messages"]
