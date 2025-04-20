@@ -53,7 +53,7 @@ export const trTranslations = {
     title: "Kişiler",
     enterIdPlaceholder: "ID girin",
     addContact: "Kişi Ekle",
-    encrypted: "",
+    encrypted: "Şifreli",
     noContacts: "Henüz kişi yok",
     addedTitle: "Kişi eklendi",
     addedDescription: "Kişi başarıyla eklendi",
@@ -63,7 +63,7 @@ export const trTranslations = {
   messages: {
     typePlaceholder: "Bir mesaj yazın...",
     send: "Gönder",
-    encrypted: "",
+    encrypted: "Şifreli",
     noMessages: "Henüz mesaj yok",
     sendFailedTitle: "Mesaj gönderilemedi",
     setKeyFirst: "Önce şifreleme anahtarını ayarlayın",

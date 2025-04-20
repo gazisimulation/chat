@@ -14,7 +14,7 @@ export const enTranslations = {
     passwordPlaceholder: "Enter your password",
     confirmPassword: "Confirm Password",
     confirmPasswordPlaceholder: "Confirm your password",
-    passwordHashNotice: "",
+    passwordHashNotice: "Passwords are hashed",
     securityNotice: "All data is encrypted and stored securely",
     loggingIn: "Logging in...",
     registering: "Registering..."
@@ -63,7 +63,7 @@ export const enTranslations = {
   messages: {
     typePlaceholder: "Type a message...",
     send: "Send",
-    encrypted: "",
+    encrypted: "Encrypted",
     noMessages: "No messages yet",
     sendFailedTitle: "Failed to send message",
     setKeyFirst: "Set encryption key first",
@@ -91,7 +91,7 @@ export const enTranslations = {
     setKey: "Set Key",
     keySet: "Key set",
     noKey: "No key set",
-    endToEnd: "",
+    endToEnd: "Encrypted",
     setKeyTitle: "Set Encryption Key",
     setKeyDescription: "Enter an encryption key to secure your messages. Share this key with your contact through a secure channel outside this app.",
     key: "Encryption Key",
