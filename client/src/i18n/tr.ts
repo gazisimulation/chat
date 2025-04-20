@@ -6,6 +6,8 @@ export const trTranslations = {
   auth: {
     title: "Güvenli Giriş",
     subtitle: "Kimlik bilgilerinizle giriş yapın veya kayıt olun",
+    secureMessaging: "Güvenli Mesajlaşma",
+    enterCredentials: "Devam etmek için kimlik bilgilerinizi girin. Yeni kullanıcılar otomatik olarak kaydedilecektir.",
     login: "Giriş",
     register: "Kayıt Ol",
     username: "Kullanıcı Adı",
@@ -17,7 +19,12 @@ export const trTranslations = {
     passwordHashNotice: "Şifre SHA256 ile hashlenecek",
     securityNotice: "Tüm veriler şifrelenir ve güvenli bir şekilde saklanır",
     loggingIn: "Giriş yapılıyor...",
-    registering: "Kayıt olunuyor..."
+    registering: "Kayıt olunuyor...",
+    authenticating: "Doğrulanıyor...",
+    continueSecurely: "Güvenli Şekilde Devam Et",
+    accountCreated: "Hesap Oluşturuldu",
+    welcomeMessage: "Güvenli Mesajlaşmaya Hoş Geldiniz",
+    error: "Kimlik Doğrulama Hatası"
   },
   
   login: {
@@ -117,6 +124,8 @@ export const trTranslations = {
     delete: "Sil",
     save: "Kaydet",
     edit: "Düzenle",
-    remove: "Kaldır"
+    remove: "Kaldır",
+    lightMode: "Aydınlık Mod",
+    darkMode: "Karanlık Mod"
   }
 };

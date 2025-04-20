@@ -29,14 +29,14 @@ export interface IStorage {
   deleteAllMessages(userId: string, contactId: string): Promise<boolean>;
   
   // Session store
-  sessionStore: session.SessionStore;
+  sessionStore: any; // Using any type to avoid type errors with the MemoryStore
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private contacts: Map<number, Contact>;
   private messages: Map<number, Message>;
-  sessionStore: session.SessionStore;
+  sessionStore: any; // Using any type to avoid type errors with the MemoryStore
   private userIdCounter: number;
   private contactIdCounter: number;
   private messageIdCounter: number;

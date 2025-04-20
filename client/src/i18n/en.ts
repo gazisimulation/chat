@@ -6,6 +6,8 @@ export const enTranslations = {
   auth: {
     title: "Secure Login",
     subtitle: "Login or register with your credentials",
+    secureMessaging: "Secure Messaging",
+    enterCredentials: "Enter your credentials to continue. New users will be registered automatically.",
     login: "Login",
     register: "Register",
     username: "Username",
@@ -17,7 +19,12 @@ export const enTranslations = {
     passwordHashNotice: "Password will be hashed using SHA256",
     securityNotice: "All data is encrypted and stored securely",
     loggingIn: "Logging in...",
-    registering: "Registering..."
+    registering: "Registering...",
+    authenticating: "Authenticating...",
+    continueSecurely: "Continue Securely",
+    accountCreated: "Account Created",
+    welcomeMessage: "Welcome to Secure Messaging",
+    error: "Authentication Error"
   },
   
   login: {
@@ -117,6 +124,8 @@ export const enTranslations = {
     delete: "Delete",
     save: "Save",
     edit: "Edit",
-    remove: "Remove"
+    remove: "Remove",
+    lightMode: "Light Mode",
+    darkMode: "Dark Mode"
   }
 };
