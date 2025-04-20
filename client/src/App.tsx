@@ -10,6 +10,7 @@ import { ProtectedRoute } from "./lib/protected-route";
 import { AuthProvider } from "./hooks/use-auth";
 import { ThemeProvider } from "./context/theme-context";
 import { LanguageProvider } from "./context/language-context";
+import { WebSocketProvider } from "./context/websocket-context";
 
 function Router() {
   return (
@@ -28,8 +29,10 @@ function App() {
         <ThemeProvider>
           <LanguageProvider>
             <AuthProvider>
-              <Toaster />
-              <Router />
+              <WebSocketProvider>
+                <Toaster />
+                <Router />
+              </WebSocketProvider>
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>

@@ -35,21 +35,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
     
     const userId = req.user!.userId;
-    const result = insertContactSchema.safeParse(req.body);
     
-    if (!result.success) {
-      return res.status(400).json({ message: "Invalid contact data" });
+    // Validate the contactId from the request
+    if (!req.body.contactId || typeof req.body.contactId !== 'string') {
+      return res.status(400).json({ message: "Invalid contact ID format" });
     }
     
+    const contactId = req.body.contactId;
+    
     // Check if the contact ID exists
-    const contactUser = await storage.getUserByUserId(req.body.contactId);
+    const contactUser = await storage.getUserByUserId(contactId);
     if (!contactUser) {
       return res.status(404).json({ message: "User with that ID not found" });
     }
     
     // Check if already a contact
     const existingContacts = await storage.getContacts(userId);
-    const alreadyContact = existingContacts.some(c => c.contactId === req.body.contactId);
+    const alreadyContact = existingContacts.some(c => c.contactId === contactId);
     
     if (alreadyContact) {
       return res.status(400).json({ message: "Already in contacts" });
@@ -57,7 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     const contact = await storage.addContact({
       userId,
-      contactId: req.body.contactId
+      contactId
     });
     
     res.status(201).json(contact);

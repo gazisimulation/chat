@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useWebSocket } from "@/context/websocket-context";
 
 // Schema for message input
 const messageSchema = z.object({
@@ -43,6 +44,8 @@ export default function MessageInput({
     },
   });
   
+  const { sendMessage, isConnected } = useWebSocket();
+  
   // Mutation for sending a message
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
@@ -53,12 +56,24 @@ export default function MessageInput({
       // Encrypt the message
       const encryptedContent = encryptMessage(content, encryptionKey);
       
-      // Send the message
+      // 1. Save message in database
       await apiRequest("POST", "/api/messages", {
         senderId: userId,
         receiverId: contactId,
         encryptedContent
       });
+      
+      // 2. Send via WebSocket for real-time delivery if connected
+      if (isConnected) {
+        sendMessage({
+          type: "message",
+          senderId: userId,
+          receiverId: contactId,
+          data: {
+            content: encryptedContent,
+          }
+        });
+      }
     },
     onSuccess: () => {
       // Reset form
