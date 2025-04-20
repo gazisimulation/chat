@@ -97,52 +97,67 @@ export default function MessageList({
         </div>
       ) : (
         <>
-          {messages.map((message) => {
-            const isSentByMe = message.senderId === userId;
-            
-            // Try to decrypt message
-            const decryptedContent = encryptionKey 
-              ? decryptMessage(message.encryptedContent, encryptionKey)
-              : t("messages.cannotDecrypt");
-            
-            // Calculate expiry time
-            const expiryMin = getExpiryTime(new Date(message.createdAt), message.seen);
-            
-            return (
-              <div
-                key={message.id}
-                className={`flex flex-col ${
-                  isSentByMe ? "items-end self-end" : "items-start"
-                }`}
-              >
+          {/* Filter out any duplicate messages based on ID and show only those with valid content */}
+          {messages
+            .filter((msg, index, self) => 
+              // Keep only first occurrence of each message ID
+              index === self.findIndex(m => m.id === msg.id) &&
+              // Ensure message has content
+              msg.encryptedContent && msg.encryptedContent.trim() !== ''
+            )
+            .map((message) => {
+              const isSentByMe = message.senderId === userId;
+              
+              // Try to decrypt message
+              const decryptedContent = encryptionKey 
+                ? decryptMessage(message.encryptedContent, encryptionKey)
+                : t("messages.cannotDecrypt");
+              
+              // Skip messages that fail to decrypt properly (empty messages)
+              if (!decryptedContent || decryptedContent.trim() === '') {
+                return null;
+              }
+              
+              // Calculate expiry time
+              const expiryMin = getExpiryTime(new Date(message.createdAt), message.seen);
+              
+              return (
                 <div
-                  className={`max-w-[80%] rounded-lg p-3 shadow-sm ${
-                    isSentByMe
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-card"
+                  key={message.id}
+                  className={`flex flex-col ${
+                    isSentByMe ? "items-end self-end" : "items-start"
                   }`}
                 >
-                  <p className="text-sm break-words">{decryptedContent}</p>
-                  <div className="flex justify-between items-center mt-1">
-                    <span className={`text-xs ${isSentByMe ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                      {format(new Date(message.createdAt), "HH:mm")}
-                    </span>
-                    <span className={`text-xs flex items-center ${isSentByMe ? "text-primary-foreground/70" : "text-emerald-500"}`}>
-                      <Lock className="h-3 w-3 mr-0.5" />
-                      {t("messages.encrypted")}
-                    </span>
+                  <div
+                    className={`max-w-[80%] rounded-lg p-3 shadow-sm ${
+                      isSentByMe
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-card"
+                    }`}
+                  >
+                    <p className="text-sm break-words">{decryptedContent}</p>
+                    <div className="flex justify-between items-center mt-1">
+                      <span className={`text-xs ${isSentByMe ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                        {format(new Date(message.createdAt), "HH:mm")}
+                      </span>
+                      <span className={`text-xs flex items-center ${isSentByMe ? "text-primary-foreground/70" : "text-emerald-500"}`}>
+                        <Lock className="h-3 w-3 mr-0.5" />
+                        {t("messages.encrypted")}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={`text-xs text-muted-foreground mt-1 ${isSentByMe ? "mr-2" : "ml-2"}`}>
+                    {message.seen 
+                      ? t("messages.expiringIn", { time: expiryMin }) 
+                      : isSentByMe 
+                        ? t("messages.sent")
+                        : t("messages.received")}
                   </div>
                 </div>
-                <div className={`text-xs text-muted-foreground mt-1 ${isSentByMe ? "mr-2" : "ml-2"}`}>
-                  {message.seen 
-                    ? t("messages.expiringIn", { time: expiryMin }) 
-                    : isSentByMe 
-                      ? t("messages.sent")
-                      : t("messages.received")}
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+            .filter(Boolean) /* Remove null elements */
+          }
           
           {/* Security notice message */}
           <div className="flex justify-center my-4">

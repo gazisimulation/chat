@@ -68,25 +68,27 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
           // Add message to cache and invalidate queries
           const newMessage = message.data as Message;
           
-          // Invalidate messages query for this contact
-          queryClient.invalidateQueries({ 
-            queryKey: ["/api/messages", newMessage.senderId] 
-          });
-          
-          // Also invalidate for the receiver contact ID
-          queryClient.invalidateQueries({ 
-            queryKey: ["/api/messages", newMessage.receiverId] 
-          });
-          
-          // Invalidate all messages queries
-          queryClient.invalidateQueries({
-            queryKey: ["/api/messages"]
-          });
-          
-          // Play notification sound
-          const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU'+'N'+'v'.repeat(20));
-          audio.volume = 0.2;
-          audio.play().catch(e => console.error("Error playing notification sound", e));
+          // Only process messages that have content
+          if (newMessage && newMessage.encryptedContent && newMessage.encryptedContent.trim() !== '') {
+            console.log("Valid WebSocket message received:", newMessage.id);
+            
+            // Invalidate messages query for this contact
+            queryClient.invalidateQueries({ 
+              queryKey: ["/api/messages", newMessage.senderId] 
+            });
+            
+            // Also invalidate for the receiver contact ID
+            queryClient.invalidateQueries({ 
+              queryKey: ["/api/messages", newMessage.receiverId] 
+            });
+            
+            // Play notification sound
+            const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU'+'N'+'v'.repeat(20));
+            audio.volume = 0.2;
+            audio.play().catch(e => console.error("Error playing notification sound", e));
+          } else {
+            console.warn("Received empty or invalid message via WebSocket");
+          }
         } else if (message.type === "seen") {
           // Update message seen status
           const { messageId } = message.data;

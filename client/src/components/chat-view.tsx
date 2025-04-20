@@ -45,10 +45,14 @@ export default function ChatView({ contactId, userId }: ChatViewProps) {
       if (!res.ok) {
         throw new Error('Failed to fetch messages');
       }
-      return res.json();
+      // Filter out any message with empty content (likely decryption failures)
+      const allMessages = await res.json();
+      return allMessages.filter((msg: Message) => 
+        msg.encryptedContent && msg.encryptedContent.trim() !== ''
+      );
     },
     enabled: !!contactId,
-    refetchInterval: 3000, // Poll every 3 seconds to ensure we get messages
+    refetchInterval: isConnected ? false : 3000, // Only poll when WebSocket is disconnected
   });
   
   // Set up polling for new messages while WebSocket isn't connected

@@ -99,7 +99,18 @@ export default function MessageInput({
   
   // Handle form submission
   function onSubmit(values: z.infer<typeof messageSchema>) {
-    sendMessageMutation.mutate(values.content);
+    // Ensure message content is not empty
+    const trimmedContent = values.content.trim();
+    if (trimmedContent === '') {
+      toast({
+        title: t("messages.emptyMessage"),
+        description: t("messages.emptyMessageDescription"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    sendMessageMutation.mutate(trimmedContent);
   }
   
   return (
